@@ -124,8 +124,9 @@ def combine_files(file_list, save_path, sort=True):
 	# collect all files
 	data_all = list()
 	for file_tmp in file_list:
-		data, num_lines = load_txt_file(file_tmp)
-		data_all += data
+		if os.path.exists(file_tmp):
+			data, num_lines = load_txt_file(file_tmp)
+			data_all += data
 
 	# sort based on frame number
 	if sort:

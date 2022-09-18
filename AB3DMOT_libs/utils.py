@@ -54,6 +54,23 @@ def get_subfolder_seq(dataset, split):
 
 		data_root = os.path.join(file_path, '../data/nuScenes/nuKITTI') 	# path containing the nuScenes-converted KITTI root
 
+	elif dataset == 'CRUW2022':
+		det_id2str = {0: 'Pedestrian', 1: 'Car'}
+
+		# subfolder = split
+		subfolder = ''
+		hw = {'image': (1080, 1440), 'lidar': (720, 1920)}
+
+		# if split == 'train': seq_eval = get_split()[0]		# 700 scenes
+		# if split == 'val':   seq_eval = get_split()[1]		# 150 scenes
+		# if split == 'test':  seq_eval = get_split()[2]      # 150 scenes
+		seq_eval = ['2021_1120_1616', '2021_1120_1618', '2021_1120_1619', '2021_1120_1632', '2021_1120_1634', 
+			'2022_0203_1428', '2022_0203_1439', '2022_0203_1441', '2022_0203_1443', '2022_0203_1445', '2022_0203_1512', 
+			'2022_0217_1251', '2022_0217_1307', '2022_0217_1322']
+
+		# data_root = os.path.join(file_path, '../data/nuScenes/nuKITTI')
+		data_root = '/mnt/nas_cruw/CRUW_2022'
+
 	else: assert False, 'error, %s dataset is not supported' % dataset
 		
 	return subfolder, det_id2str, hw, seq_eval, data_root
@@ -85,15 +102,27 @@ def initialize(cfg, data_root, save_dir, subfolder, seq_name, cat, ID_start, hw,
 
 	# load ego poses
 	oxts = os.path.join(data_root, subfolder, 'oxts', seq_name+'.json')
-	if not is_path_exists(oxts): oxts = os.path.join(data_root, subfolder, 'oxts', seq_name+'.txt')
-	imu_poses = load_oxts(oxts)                 # seq_frames x 4 x 4
+	if not is_path_exists(oxts): 
+		oxts = os.path.join(data_root, subfolder, 'oxts', seq_name+'.txt')
+	if is_path_exists(oxts): 
+		imu_poses = load_oxts(oxts)                 # seq_frames x 4 x 4
+	else:
+		imu_poses = None
+		print("imu pose is not loaded")
 
 	# load calibration
 	calib = os.path.join(data_root, subfolder, 'calib', seq_name+'.txt')
-	calib = Calibration(calib)
+	try:
+		calib = Calibration(calib)
+	except:
+		calib = None
+		print("calibration file is not loaded")
 
 	# load image for visualization
-	img_seq = os.path.join(data_root, subfolder, 'image_02', seq_name)
+	if cfg['dataset'] == 'CRUW2022':
+		img_seq = os.path.join(data_root, subfolder, seq_name, 'camera/left_rrdnet_seq')
+	else:
+		img_seq = os.path.join(data_root, subfolder, 'image_02', seq_name)
 	vis_dir = os.path.join(save_dir, 'vis_debug', seq_name); mkdir_if_missing(vis_dir)
 
 	# initiate the tracker
@@ -124,9 +153,9 @@ def find_all_frames(root_dir, subset, data_suffix, seq_list):
 		# find all frame indexes for each category
 		for subset_tmp in subset:
 			data_dir = os.path.join(root_dir, subset_tmp, 'trk_withid'+data_suffix, seq_tmp)			# pointrcnn_ped
-			if not is_path_exists(data_dir):
-				print('%s dir not exist' % data_dir)
-				assert False, 'error'
+			# if not is_path_exists(data_dir):
+			# 	print('%s dir not exist' % data_dir)
+			# 	assert False, 'error'
 
 			# extract frame string from this category
 			frame_list, _ = load_list_from_folder(data_dir)

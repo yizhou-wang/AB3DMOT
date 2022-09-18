@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: evaluate.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": ["dd3d/dla34/day_enh_test_H1", "1", "3D", "0.25"]
+        },
+        {
+            "name": "Python: main.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            // "preLaunchTask": "source profile",
+            "justMyCode": false,
+            "args": [
+                "--dataset",
+                "CRUW2022",
+                "--det_name",
+                "dd3d/dla34/day_enh"
+            ]
+        }
+    ]
+}

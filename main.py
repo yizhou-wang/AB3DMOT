@@ -24,7 +24,10 @@ def main_per_cat(cfg, cat, log, ID_start):
 	result_sha = '%s_%s_%s' % (cfg.det_name, cat, cfg.split)
 	det_root = os.path.join('./data', cfg.dataset, 'detection', result_sha)
 	subfolder, det_id2str, hw, seq_eval, data_root = get_subfolder_seq(cfg.dataset, cfg.split)
-	trk_root = os.path.join(data_root, 'tracking')
+	if cfg['dataset'] == 'CRUW2022':
+		trk_root = os.path.join(data_root)
+	else:
+		trk_root = os.path.join(data_root, 'tracking')
 	save_dir = os.path.join(cfg.save_root, result_sha + '_H%d' % cfg.num_hypo); mkdir_if_missing(save_dir)
 
 	# create eval dir for each hypothesis 
@@ -49,6 +52,10 @@ def main_per_cat(cfg, cat, log, ID_start):
 
 		# loop over frame
 		min_frame, max_frame = int(frame_list[0]), int(frame_list[-1])
+		if cfg['dataset'] == 'CRUW2022' and cfg.split == 'test':
+			# min_frame = 1260
+			min_frame = 0
+			max_frame = 539
 		for frame in range(min_frame, max_frame + 1):
 			# add an additional frame here to deal with the case that the last frame, although no detection
 			# but should output an N x 0 affinity for consistency

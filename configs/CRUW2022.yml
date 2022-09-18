@@ -1,0 +1,18 @@
+# ------------------- General Options -------------------------
+description                  : AB3DMOT
+seed                         : 0
+
+# --------------- main.py
+save_root                    : ./results/CRUW2022
+dataset                      : CRUW2022
+split                        : test      # [train, val, test]
+det_name                     : dd3d     # name of the detector [dd3d, smoke_quat, smoke_rot_y]
+cat_list                     : ['Pedestrian', 'Car']
+
+score_threshold              : -10000     # filter out tracklet with low confidence if necessary, default no filtering here but do it in trk_conf_threshold.py
+num_hypo                     : 1          # >1 to allow multi-hypothesis tracking
+
+# --------------- model.py
+ego_com                      : true      # turn on only slightly reduce speed but increase a lot for performance
+vis                          : false       # only for debug or visualization purpose, will significantly reduce speed
+affi_pro                     : true

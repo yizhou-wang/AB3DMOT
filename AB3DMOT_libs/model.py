@@ -90,6 +90,10 @@ class AB3DMOT(object):
 				elif cat == 'Truck': 		metric, thres, min_hits, max_age = 'dist', 10, 3, 2
 				else: assert False, 'error'
 			else: assert False, 'error'
+		elif cfg.dataset == 'CRUW2022': # change here
+			if cat == 'Car': 			algm, metric, thres, min_hits, max_age = 'hungar', 'giou_3d', -0.2, 3, 2
+			elif cat == 'Pedestrian': 	algm, metric, thres, min_hits, max_age = 'greedy', 'giou_3d', -1, 1, 5	
+			else: assert False, 'error'
 		else: assert False, 'no such dataset'
 
 		# add negative due to it is the cost
